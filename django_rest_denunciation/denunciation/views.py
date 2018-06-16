@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from django.http import Http404
 from rest_framework.response import Response
-from denunciation.models import Denunciation, Denunciable
+from denunciation.models import Denunciation, Denunciable, Denouncer
 from json import loads
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.exceptions import ValidationError
@@ -65,9 +65,14 @@ class DenunciationList(APIView):
                 denunciable.denunciable_type = data['denunciable_type']
                 denunciable.save()
 
+            denouncer = Denouncer()
+            denouncer.email = data['denouncer_id']
+            denouncer.save()
+
             denunciation = Denunciation()
             denunciation.justification = data['justification']
             denunciation.denunciable = denunciable
+            denunciation.denouncer = denouncer
             denunciation.save()
 
             response = Response(status=201)

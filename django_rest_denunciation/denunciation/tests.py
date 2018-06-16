@@ -62,41 +62,45 @@ class TestDenunciationStates(test.TestCase):
         with self.assertRaisesMessage(Exception, exception_message):
             tested_method()
 
-    def test_create(self):
-        response = self.client.post('/api/denunciation/', dumps(
-            {
-                "id": 1,
-                "justification": "comentário ofensivo",
-                "denunciable_id": 1,
-                "denunciable_type": "Comment"
-            }
-        ), content_type='application/json')
-
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-
 
 class TestDenunciation(test.TestCase):
 
-    def test_index(self):
-        response = self.client.post('/api/denunciation/', dumps(
-            {
-                "id": 1,
-                "justification": "comentário ofensivo",
-                "denunciable_id": 1,
-                "denunciable_type": "Comment"
-            }
-        ), content_type='application/json')
+    json1 = {
+        "id": 1,
+        "justification": "comentário ofensivo",
+        "denunciable_id": 1,
+        "denouncer_id": "daniel@unb.br",
+        "denunciable_type": "Comment"
+    }
+
+    json2 = {
+        "id": 2,
+        "justification": "comentário preconceituoso",
+        "denunciable_id": 2,
+        "denouncer_id": "mateus@unb.br",
+        "denunciable_type": "Comment"
+    }
+
+    def response_post(self, json):
+        response = self.client.post(
+            '/api/denunciation/',
+            dumps(json),
+            content_type='application/json'
+        )
+
+        return response
+
+    def test_create(self):
+        response = self.response_post(self.json1)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-        response = self.client.post('/api/denunciation/', dumps(
-            {
-                "id": 2,
-                "justification": "comentário ofensivo",
-                "denunciable_id": 2,
-                "denunciable_type": "Comment"
-            }
-        ), content_type='application/json')
+    def test_index(self):
+        response = self.response_post(self.json1)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        response = self.response_post(self.json2)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
@@ -106,20 +110,14 @@ class TestDenunciation(test.TestCase):
         self.assertEqual(Denunciation.objects.count(), 2)
 
     def test_delete(self):
-        '''
-        response = self.client.post('/api/denunciation/', dumps(
-            {
-                "id": 1,
-                "justification": "comentário ofensivo",
-                "denunciable_id": 1,
-                "denunciable_type": "Comment"
-            }
-        ), content_type='application/json')
+        response = self.response_post(self.json1)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-        response = self.client.delete('/api/denunciation/1', follow=False)
+        response = self.client.delete(
+            '/api/denunciation/1/',
+            follow=False
+        )
 
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(Denunciation.objects.count(), 0)
-        '''
