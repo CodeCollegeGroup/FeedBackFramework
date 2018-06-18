@@ -79,9 +79,15 @@ class Denunciable(models.Model):
 
     denunciable_id = models.IntegerField()
 
-    denunciable_type = models.CharField(max_length=100)
+    denunciable_type = models.CharField(
+        max_length=100,
+        help_text='Determines the type of the denunciable'
+        )
 
-    denunciable_datetime = models.DateTimeField(auto_now_add=True)
+    denunciable_datetime = models.DateTimeField(
+        auto_now_add=True,
+        help_text='Date which the denounciable has been made'
+        )
 
     class Meta:
         unique_together = ('denunciable_id', 'denunciable_type')
@@ -92,9 +98,13 @@ class DenunciationCategory(models.Model):
     name = models.CharField(
         max_length=100,
         unique=True,
+        help_text='Name of the denunciation\'s category'
     )
 
-    gravity = models.PositiveIntegerField()
+    gravity = models.PositiveIntegerField(
+        help_text='An integer value qualifying \
+        the gravity of the denunciation'
+    )
 
     def save(self, *args, **kwargs):  # pylint: disable=arguments-differ
         self.gravity = map_gravity(self.gravity)
@@ -106,27 +116,45 @@ class Denunciation(models.Model):
 
     denunciable = models.ForeignKey(
         'Denunciable',
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        help_text='Denunciable related to the denounce.'
     )
 
     current_state = models.ForeignKey(
         'DenunciationState',
         on_delete=models.CASCADE,
+        help_text='The current state of the denunciation.'
+        'it could be Null, Wainting, Evaluating and done.'
     )
 
-    categories = models.ManyToManyField('DenunciationCategory')
+    categories = models.ManyToManyField(
+        'DenunciationCategory',
+        help_text='The categories applied to the denunciation.'
+    )
 
     domain = models.ForeignKey(
         Domain,
         on_delete=models.SET_NULL,
-        null=True
+        null=True,
+        help_text='The client\'s domain.'
     )
 
-    justification = models.CharField(max_length=500)
+    justification = models.CharField(
+        max_length=500,
+        help_text='A brief text describing why'
+        'the denunciation has been made.'
+    )
 
-    created_at = models.DateField(auto_now_add=True)
+    created_at = models.DateField(
+        auto_now_add=True,
+        help_text='The date in which the denunciation has been made.'
+    )
 
-    gravity = models.IntegerField(editable=False)
+    gravity = models.IntegerField(
+        editable=False,
+        help_text='A integer that qualifies the gravity'
+        'of the denunciation. it could be:0,1,2.'
+    )
 
     _initial_state = WaitingState
 

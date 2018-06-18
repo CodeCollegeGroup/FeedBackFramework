@@ -15,10 +15,13 @@ Including another URLconf
 """
 from django.urls import path
 from django.conf.urls import include
+from rest_framework.documentation import include_docs_urls
+
 
 urlpatterns = [  # pylint: disable=invalid-name
     path('api/', include([
         path('denunciations/', include('denunciation.urls')),
         path('domains/', include('domain.urls')),
+        path('docs/', include_docs_urls(title='Denunciation\'s API'))
     ])),
 ]

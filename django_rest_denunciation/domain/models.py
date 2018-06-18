@@ -37,20 +37,25 @@ class Domain(models.Model):
     administrator = models.ForeignKey(
         'DomainAdministrator',
         on_delete=models.CASCADE,
+        help_text='Refers to the administrator of the domain'
     )
 
     application_name = models.CharField(
         max_length=50,
-        unique=True
+        unique=True,
+        help_text='Refers to the name of the application'
     )
 
     key = models.CharField(
         max_length=KEY_LENGTH,
         unique=True,
-        editable=False
+        editable=False,
+        help_text='Refers to the key of the domain'
     )
 
-    uri = models.URLField(max_length=150)
+    uri = models.URLField(
+        max_length=150,
+        help_text='Refers to the url of the domain')
 
     def __str__(self):
         return self.uri
