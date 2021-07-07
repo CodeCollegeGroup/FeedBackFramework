@@ -1,3 +1,7 @@
+env:
+  global:
+    - CC_TEST_REPORTER_ID=20ba1fe10b612e336a3fa714f2963cd91da674b14e8930f3df48e57b58cce15a
+
 language: python
 
 python:
@@ -29,7 +33,7 @@ script:
   - sudo docker-compose run command coverage xml
 
 after_script:
-    - sudo docker-compose run command ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
+    - sudo docker-compose run command ./cc-test-reporter after-build -r20ba1fe10b612e336a3fa714f2963cd91da674b14e8930f3df48e57b58cce15a --exit-code $TRAVIS_TEST_RESULT
 
 branch:
   only:
